@@ -1,13 +1,13 @@
 import { apiClient } from '../client';
-import { ApiResponse } from '../types/common';
 import {
   LoginRequest,
   LoginResponse,
-  SignupRequest,
   RefreshTokenRequest,
   RefreshTokenResponse,
+  SignupRequest,
   SocialLoginRequest,
 } from '../types/auth';
+import { ApiResponse } from '../types/common';
 
 export const authApi = {
   login: (data: LoginRequest) =>

@@ -1,6 +1,6 @@
-import { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { clearTokens, getAccessToken, getRefreshToken, setAccessToken } from '../utils/storage';
 import { apiClient } from './client';
-import { getAccessToken, getRefreshToken, setAccessToken, clearTokens } from '../utils/storage';
 
 // 요청 인터셉터
 apiClient.interceptors.request.use(

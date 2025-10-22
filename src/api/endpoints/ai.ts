@@ -1,6 +1,6 @@
 import { apiClient } from '../client';
-import { ApiResponse } from '../types/common';
 import { AiChatRequest, AiChatResponse } from '../types/ai';
+import { ApiResponse } from '../types/common';
 
 export const aiApi = {
   chat: (data: AiChatRequest) =>

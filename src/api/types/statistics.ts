@@ -32,3 +32,15 @@ export interface CategoryStatisticsParams {
   yearMonth: string;
   type: 'INCOME' | 'EXPENSE';
 }
+
+export interface AccountBalance {
+  accountId: number;
+  accountName: string;
+  balance: number;
+}
+
+export interface AccountBalanceParams {
+  bookId: number;
+}
+
+export type AccountBalanceResponse = AccountBalance;

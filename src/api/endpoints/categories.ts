@@ -1,6 +1,6 @@
 import { apiClient } from '../client';
+import { BookType, Category, PaymentMethod } from '../types/categories';
 import { ApiResponse } from '../types/common';
-import { Category, PaymentMethod, BookType } from '../types/categories';
 
 export const categoriesApi = {
   getIncomeCategories: (bookType: BookType) =>

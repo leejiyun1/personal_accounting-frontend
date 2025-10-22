@@ -1,12 +1,41 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authApi } from '../api';
+import { setAccessToken, setRefreshToken, setUser } from '../utils/storage';
 
 function LoginPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
-    console.log('로그인:', email, password);
-    // TODO: 백엔드 API 호출
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError('이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await authApi.login({ email, password });
+      const { accessToken, refreshToken, user } = response.data.data;
+
+      // 토큰 저장
+      setAccessToken(accessToken);
+      setRefreshToken(refreshToken);
+      setUser(user);
+
+      // 대시보드로 이동
+      navigate('/dashboard');
+    } catch (err: any) {
+      console.error('로그인 실패:', err);
+      setError(err.response?.data?.message || '로그인에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -27,6 +56,13 @@ function LoginPage() {
             이메일로 로그인하세요
           </p>
         </div>
+
+        {/* 에러 메시지 */}
+        {error && (
+          <div className="p-4 text-sm text-red-800 bg-red-50 rounded-lg dark:bg-red-900 dark:text-red-200">
+            {error}
+          </div>
+        )}
 
         {/* 소셜 로그인 버튼 */}
         <div className="space-y-3">
@@ -86,6 +122,7 @@ function LoginPage() {
               className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
               placeholder="name@example.com"
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -105,15 +142,17 @@ function LoginPage() {
               className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
               placeholder="••••••••"
               required
+              disabled={isLoading}
             />
           </div>
 
           {/* 로그인 버튼 */}
           <button
             type="submit"
-            className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            disabled={isLoading}
+            className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            로그인
+            {isLoading ? '로그인 중...' : '로그인'}
           </button>
 
         </form>

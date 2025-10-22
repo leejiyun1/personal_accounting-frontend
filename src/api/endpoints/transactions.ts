@@ -1,10 +1,10 @@
 import { apiClient } from '../client';
 import { ApiResponse, PaginationResponse } from '../types/common';
 import {
-  Transaction,
   CreateTransactionRequest,
-  UpdateTransactionRequest,
+  Transaction,
   TransactionListParams,
+  UpdateTransactionRequest,
 } from '../types/transactions';
 
 export const transactionsApi = {

@@ -1,10 +1,12 @@
 import { apiClient } from '../client';
 import { ApiResponse } from '../types/common';
 import {
-  SummaryResponse,
+  AccountBalanceParams,
+  AccountBalanceResponse,
+  CategoryStatisticsParams,
   CategoryStatisticsResponse,
   SummaryParams,
-  CategoryStatisticsParams,
+  SummaryResponse,
 } from '../types/statistics';
 
 export const statisticsApi = {
@@ -15,6 +17,11 @@ export const statisticsApi = {
 
   getCategoryStatistics: (params: CategoryStatisticsParams) =>
     apiClient.get<ApiResponse<CategoryStatisticsResponse>>('/statistics/category', {
+      params,
+    }),
+
+  getAccountBalances: (params: AccountBalanceParams) =>
+    apiClient.get<ApiResponse<AccountBalanceResponse[]>>('/statistics/accounts', {
       params,
     }),
 };

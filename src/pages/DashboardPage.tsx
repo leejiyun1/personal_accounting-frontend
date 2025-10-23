@@ -12,15 +12,15 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import { booksApi, statisticsApi } from '../api';
+import { statisticsApi } from '../api';
+import { useBookStore } from '../store/bookStore';
 
 function DashboardPage() {
-  // ========== 상태 관리 ==========
-  const [books, setBooks] = useState<any[]>([]);
-  const [selectedBookId, setSelectedBookId] = useState<number | null>(null);
+  // Zustand에서 가져오기
+  const { selectedBookId } = useBookStore();
+
   const [monthlySummary, setMonthlySummary] = useState<any[]>([]);
   const [categoryData, setCategoryData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   // 채팅 상태
   const [message, setMessage] = useState('');
@@ -33,31 +33,10 @@ function DashboardPage() {
   const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
   const [selectedType, setSelectedType] = useState<'INCOME' | 'EXPENSE'>('EXPENSE');
 
+
   // ========== API 호출 ==========
 
-  // 1. 장부 목록 가져오기 (최초 1회)
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await booksApi.getBooks();
-        const bookList = response.data.data || [];
-        setBooks(bookList);
-
-        // 첫 번째 장부 자동 선택
-        if (bookList.length > 0) {
-          setSelectedBookId(bookList[0].id);
-        }
-      } catch (error) {
-        console.error('장부 목록 조회 실패:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchBooks();
-  }, []);
-
-  // 2. 월별 요약 데이터 가져오기
+  // 월별 요약 데이터 가져오기
   useEffect(() => {
     if (!selectedBookId) return;
 
@@ -73,7 +52,16 @@ function DashboardPage() {
     fetchMonthlySummary();
   }, [selectedBookId]);
 
-  // 3. 카테고리 통계 가져오기
+  // 최근 12개월 데이터만 필터링
+  const filteredMonthlySummary = useMemo(() => {
+    const now = new Date();
+    const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+    const startYearMonth = `${twelveMonthsAgo.getFullYear()}-${String(twelveMonthsAgo.getMonth() + 1).padStart(2, '0')}`;
+
+    return monthlySummary.filter(item => item.yearMonth >= startYearMonth);
+  }, [monthlySummary]);
+
+  // 카테고리 통계 가져오기
   useEffect(() => {
     if (!selectedBookId) return;
 
@@ -97,13 +85,13 @@ function DashboardPage() {
 
   // 차트용 데이터 변환
   const chartData = useMemo(() => {
-    return monthlySummary.map(item => ({
+    return filteredMonthlySummary.map(item => ({
       month: item.yearMonth,
       monthName: `${item.yearMonth.split('-')[1]}월`,
       income: item.totalIncome,
       expense: item.totalExpense,
     }));
-  }, [monthlySummary]);
+  }, [filteredMonthlySummary]);
 
   // 도넛 차트용 데이터 변환
   const pieChartData = useMemo(() => {
@@ -145,48 +133,9 @@ function DashboardPage() {
   };
 
   // ========== 렌더링 ==========
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-gray-600 dark:text-gray-400">로딩 중...</div>
-      </div>
-    );
-  }
-
-  if (books.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600 dark:text-gray-400 mb-4">장부가 없습니다.</p>
-          <p className="text-sm text-gray-500 dark:text-gray-500">먼저 장부를 생성해주세요.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
-
-        {/* 장부 선택 */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            장부 선택
-          </label>
-          <select
-            value={selectedBookId || ''}
-            onChange={(e) => setSelectedBookId(Number(e.target.value))}
-            className="w-full md:w-auto bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            {books.map((book) => (
-              <option key={book.id} value={book.id}>
-                {book.name} ({book.bookType === 'personal' ? '개인' : '사업'})
-              </option>
-            ))}
-          </select>
-        </div>
-
         {/* AI 채팅 영역 */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">

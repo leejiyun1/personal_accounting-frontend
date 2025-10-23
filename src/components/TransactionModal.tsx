@@ -25,7 +25,7 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
           bookId,
           accountId,
         });
-        setTransactions(response.data.data.content || []);
+        setTransactions(response.data.data || []);
       } catch (error) {
         console.error('거래 내역 조회 실패:', error);
       } finally {
@@ -57,13 +57,24 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
 
   // 통계 계산
   const stats = useMemo(() => {
+    console.log('filteredTransactions:', filteredTransactions);
+    console.log('첫 거래:', filteredTransactions[0]);
+
     const totalIncome = filteredTransactions
       .filter(t => t.type === 'INCOME')
-      .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+      .reduce((sum, t) => {
+        console.log('income amount:', t.amount, typeof t.amount);
+        return sum + (Number(t.amount) || 0);
+      }, 0);
 
     const totalExpense = filteredTransactions
       .filter(t => t.type === 'EXPENSE')
-      .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+      .reduce((sum, t) => {
+        console.log('expense amount:', t.amount, typeof t.amount);
+        return sum + (Number(t.amount) || 0);
+      }, 0);
+
+    console.log('totalIncome:', totalIncome, 'totalExpense:', totalExpense);
 
     return {
       totalIncome,

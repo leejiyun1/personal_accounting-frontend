@@ -32,6 +32,7 @@ export interface UpdateTransactionRequest {
 
 export interface TransactionListParams {
   bookId: number;
+  accountId?: number;
   type?: 'INCOME' | 'EXPENSE';
   startDate?: string;
   endDate?: string;

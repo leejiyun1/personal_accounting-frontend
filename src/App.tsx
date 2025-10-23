@@ -1,9 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import AnalysisPage from './pages/AnalysisPage';
 import BooksPage from './pages/BooksPage';
 import DashboardPage from './pages/DashboardPage';
+import LedgerPage from './pages/LedgerPage';
 import LoginPage from './pages/LoginPage';
-import StatisticsPage from './pages/StatisticsPage';
 
 function App() {
   return (
@@ -28,11 +29,19 @@ function App() {
           </>
         } />
 
-        {/* 재무제표 (Navbar 있음) */}
-        <Route path="/statistics" element={
+        {/* 경영 분석 (Navbar 있음) */}
+        <Route path="/analysis" element={
           <>
             <Navbar />
-            <StatisticsPage />
+            <AnalysisPage />
+          </>
+        } />
+
+        {/* 회계 장부 (Navbar 있음) */}
+        <Route path="/ledger" element={
+          <>
+            <Navbar />
+            <LedgerPage />
           </>
         } />
       </Routes>

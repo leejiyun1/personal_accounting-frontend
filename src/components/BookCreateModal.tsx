@@ -18,7 +18,7 @@ function BookCreateModal({ isOpen, onClose, onSuccess }: BookCreateModalProps) {
 
     setIsSubmitting(true);
     try {
-      await booksApi.createBook({ bookType, name: name.trim() });
+      await booksApi.createBook({ bookType: bookType.toUpperCase(), name: name.trim() });
       onSuccess();
       onClose();
       setName('');
@@ -36,7 +36,7 @@ function BookCreateModal({ isOpen, onClose, onSuccess }: BookCreateModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose}></div>
-      
+
       <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4 p-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
           새 장부 만들기

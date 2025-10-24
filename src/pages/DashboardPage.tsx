@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -12,45 +12,28 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import { statisticsApi } from '../api';
+import { useStatistics } from '../hooks/useStatistics';
 import { useBookStore } from '../store/bookStore';
 
 function DashboardPage() {
-  // Zustand에서 가져오기
   const { selectedBookId } = useBookStore();
 
-  const [monthlySummary, setMonthlySummary] = useState<any[]>([]);
-  const [categoryData, setCategoryData] = useState<any>(null);
+  const currentMonthName = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
+  const [selectedType, setSelectedType] = useState<'INCOME' | 'EXPENSE'>('EXPENSE');
+
+  // 훅 사용
+  const {
+    monthlySummary,
+    categoryData,
+    fetchCategoryStatistics,
+  } = useStatistics({ bookId: selectedBookId, yearMonth: selectedMonth });
 
   // 채팅 상태
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([
     { role: 'ai', content: '안녕하세요! AI 시드입니다.' }
   ]);
-
-  // 차트 상태
-  const currentMonthName = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
-  const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
-  const [selectedType, setSelectedType] = useState<'INCOME' | 'EXPENSE'>('EXPENSE');
-
-
-  // ========== API 호출 ==========
-
-  // 월별 요약 데이터 가져오기
-  useEffect(() => {
-    if (!selectedBookId) return;
-
-    const fetchMonthlySummary = async () => {
-      try {
-        const response = await statisticsApi.getSummary({ bookId: selectedBookId });
-        setMonthlySummary(response.data.data || []);
-      } catch (error) {
-        console.error('월별 요약 조회 실패:', error);
-      }
-    };
-
-    fetchMonthlySummary();
-  }, [selectedBookId]);
 
   // 최근 12개월 데이터만 필터링
   const filteredMonthlySummary = useMemo(() => {
@@ -60,26 +43,6 @@ function DashboardPage() {
 
     return monthlySummary.filter(item => item.yearMonth >= startYearMonth);
   }, [monthlySummary]);
-
-  // 카테고리 통계 가져오기
-  useEffect(() => {
-    if (!selectedBookId) return;
-
-    const fetchCategoryStats = async () => {
-      try {
-        const response = await statisticsApi.getCategoryStatistics({
-          bookId: selectedBookId,
-          yearMonth: selectedMonth,
-          type: selectedType,
-        });
-        setCategoryData(response.data.data);
-      } catch (error) {
-        console.error('카테고리 통계 조회 실패:', error);
-      }
-    };
-
-    fetchCategoryStats();
-  }, [selectedBookId, selectedMonth, selectedType]);
 
   // ========== 데이터 계산 ==========
 
@@ -129,6 +92,7 @@ function DashboardPage() {
     if (data?.payload?.month) {
       setSelectedMonth(data.payload.month);
       setSelectedType(type);
+      fetchCategoryStatistics(type);
     }
   };
 
@@ -200,8 +164,14 @@ function DashboardPage() {
                 />
                 <Legend
                   onClick={(e) => {
-                    if (e.dataKey === 'income') setSelectedType('INCOME');
-                    if (e.dataKey === 'expense') setSelectedType('EXPENSE');
+                    if (e.dataKey === 'income') {
+                      setSelectedType('INCOME');
+                      fetchCategoryStatistics('INCOME');
+                    }
+                    if (e.dataKey === 'expense') {
+                      setSelectedType('EXPENSE');
+                      fetchCategoryStatistics('EXPENSE');
+                    }
                   }}
                   wrapperStyle={{ cursor: 'pointer' }}
                 />

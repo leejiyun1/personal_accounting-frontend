@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import { transactionsApi } from '../api';
+import { useTransactions } from '../../hooks/useTransactions';
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -9,80 +8,19 @@ interface TransactionModalProps {
 }
 
 function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionModalProps) {
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filterType, setFilterType] = useState<'ALL' | 'INCOME' | 'EXPENSE'>('ALL');
-  const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>('latest');
-
-  // API 호출
-  useEffect(() => {
-    if (!isOpen || !bookId || !accountId) return;
-
-    setIsLoading(true);
-    const fetchTransactions = async () => {
-      try {
-        const response = await transactionsApi.getTransactions({
-          bookId,
-          accountId,
-        });
-        setTransactions(response.data.data || []);
-      } catch (error) {
-        console.error('거래 내역 조회 실패:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTransactions();
-  }, [isOpen, bookId, accountId]);
-
-  // 필터링 및 정렬
-  const filteredTransactions = useMemo(() => {
-    let filtered = transactions;
-
-    // 타입 필터
-    if (filterType !== 'ALL') {
-      filtered = filtered.filter(t => t.type === filterType);
-    }
-
-    // 정렬
-    filtered = [...filtered].sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      return sortOrder === 'latest' ? dateB - dateA : dateA - dateB;
-    });
-
-    return filtered;
-  }, [transactions, filterType, sortOrder]);
-
-  // 통계 계산
-  const stats = useMemo(() => {
-    console.log('filteredTransactions:', filteredTransactions);
-    console.log('첫 거래:', filteredTransactions[0]);
-
-    const totalIncome = filteredTransactions
-      .filter(t => t.type === 'INCOME')
-      .reduce((sum, t) => {
-        console.log('income amount:', t.amount, typeof t.amount);
-        return sum + (Number(t.amount) || 0);
-      }, 0);
-
-    const totalExpense = filteredTransactions
-      .filter(t => t.type === 'EXPENSE')
-      .reduce((sum, t) => {
-        console.log('expense amount:', t.amount, typeof t.amount);
-        return sum + (Number(t.amount) || 0);
-      }, 0);
-
-    console.log('totalIncome:', totalIncome, 'totalExpense:', totalExpense);
-
-    return {
-      totalIncome,
-      totalExpense,
-      balance: totalIncome - totalExpense,
-      count: filteredTransactions.length
-    };
-  }, [filteredTransactions]);
+  const {
+    transactions,
+    isLoading,
+    filterType,
+    setFilterType,
+    sortOrder,
+    setSortOrder,
+    stats,
+  } = useTransactions({
+    bookId,
+    accountId,
+    enabled: isOpen,
+  });
 
   if (!isOpen) return null;
 
@@ -199,7 +137,7 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
               </div>
 
               {/* 거래 목록 */}
-              {filteredTransactions.length === 0 ? (
+              {transactions.length === 0 ? (
                 <div className="text-center py-16">
                   <p className="text-gray-500 dark:text-gray-400">
                     거래 내역이 없습니다
@@ -225,7 +163,7 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {filteredTransactions.map((transaction) => (
+                      {transactions.map((transaction) => (
                         <tr
                           key={transaction.id}
                           className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"

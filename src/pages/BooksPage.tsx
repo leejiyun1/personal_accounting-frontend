@@ -1,43 +1,26 @@
-import { useEffect, useState } from 'react';
-import { booksApi, statisticsApi } from '../api';
-import BookCreateModal from '../components/BookCreateModal';
-import TransactionModal from '../components/TransactionModal';
-import { useBookStore } from '../store/bookStore';
+import { useState } from 'react';
+import BookCreateModal from '../components/domain/BookCreateModal';
+import TransactionModal from '../components/domain/TransactionModal';
+import { useBooks } from '../hooks/useBooks';
 
 function BooksPage() {
-  // Zustand에서 가져오기
-  const { books, selectedBookId, setSelectedBookId, setBooks } = useBookStore();
+  const {
+    books,
+    selectedBookId,
+    // setSelectedBookId,
+    accountBalances,
+    // isLoading,
+    deleteBook,
+  } = useBooks();
 
   const [selectedAccountId, setSelectedAccountId] = useState<number | null>(null);
-  const [accountBalances, setAccountBalances] = useState<any[]>([]);
-
-  // 모달 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-  // 계정 잔액 조회
-  useEffect(() => {
-    if (!selectedBookId) return;
-
-    const fetchBalances = async () => {
-      try {
-        const response = await statisticsApi.getAccountBalances({ bookId: selectedBookId });
-        setAccountBalances(response.data.data || []);
-      } catch (error) {
-        console.error('계정 잔액 조회 실패:', error);
-      }
-    };
-    fetchBalances();
-  }, [selectedBookId]);
 
   const selectedBook = books.find(book => book.id === selectedBookId);
 
   const getTotalBalance = () => {
     return accountBalances.reduce((sum, acc) => sum + acc.balance, 0);
-  };
-
-  const getBookIcon = (type: string) => {
-    return type === 'PERSONAL' ? '📕' : '💼';
   };
 
   const openModal = (accountId: number) => {
@@ -47,29 +30,7 @@ function BooksPage() {
 
   const handleDeleteBook = async () => {
     if (!selectedBookId) return;
-
-    if (!confirm('정말 이 장부를 삭제하시겠습니까?\n모든 거래 내역이 삭제됩니다.')) {
-      return;
-    }
-
-    try {
-      await booksApi.deleteBook(selectedBookId);
-
-      // 장부 목록 새로고침
-      const response = await booksApi.getBooks();
-      const bookList = response.data.data || [];
-      setBooks(bookList);
-
-      // 첫 번째 장부로 이동 (있으면)
-      if (bookList.length > 0) {
-        setSelectedBookId(bookList[0].id);
-      }
-
-      alert('장부가 삭제되었습니다.');
-    } catch (error) {
-      console.error('장부 삭제 실패:', error);
-      alert('장부 삭제에 실패했습니다.');
-    }
+    await deleteBook(selectedBookId);
   };
 
   return (

@@ -1,41 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { authApi } from '../api';
-import { setAccessToken, setRefreshToken, setUser } from '../utils/storage';
+import { useAuth } from '../hooks/useAuth';
 
 function LoginPage() {
-  const navigate = useNavigate();
+  const { login, isLoading, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      setError('이메일과 비밀번호를 입력해주세요.');
-      return;
-    }
-
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const response = await authApi.login({ email, password });
-      const { accessToken, refreshToken, user } = response.data.data;
-
-      // 토큰 저장
-      setAccessToken(accessToken);
-      setRefreshToken(refreshToken);
-      setUser(user);
-
-      // 대시보드로 이동
-      navigate('/dashboard');
-    } catch (err: any) {
-      console.error('로그인 실패:', err);
-      setError(err.response?.data?.message || '로그인에 실패했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
+  const handleLogin = () => {
+    login(email, password);
   };
 
   const handleSocialLogin = (provider: string) => {

@@ -1,3 +1,9 @@
+export interface UserInfo {
+  id: number;
+  email: string;
+  name: string;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -6,11 +12,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
-  user: {
-    id: number;
-    email: string;
-    name: string;
-  };
+  user: UserInfo;
 }
 
 export interface SignupRequest {

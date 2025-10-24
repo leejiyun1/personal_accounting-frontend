@@ -11,9 +11,9 @@ import {
 
 export const statisticsApi = {
   getSummary: (params: SummaryParams) =>
-    apiClient.get<ApiResponse<SummaryResponse>>('/statistics/summary', {
-      params,
-    }),
+  apiClient.get<ApiResponse<SummaryResponse[]>>('/statistics/summary', {
+    params,
+  }),
 
   getCategoryStatistics: (params: CategoryStatisticsParams) =>
     apiClient.get<ApiResponse<CategoryStatisticsResponse>>('/statistics/category', {

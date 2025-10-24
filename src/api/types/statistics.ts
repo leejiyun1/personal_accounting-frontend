@@ -5,10 +5,7 @@ export interface MonthlySummary {
   balance: number;
 }
 
-export interface SummaryResponse {
-  months: MonthlySummary[];
-}
-
+export type SummaryResponse = MonthlySummary[];
 export interface CategoryStatistic {
   categoryId: number;
   categoryName: string;

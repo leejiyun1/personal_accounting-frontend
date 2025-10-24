@@ -18,7 +18,10 @@ function BookCreateModal({ isOpen, onClose, onSuccess }: BookCreateModalProps) {
 
     setIsSubmitting(true);
     try {
-      await booksApi.createBook({ bookType: bookType.toUpperCase(), name: name.trim() });
+      await booksApi.createBook({
+        bookType: bookType.toUpperCase() as 'PERSONAL' | 'BUSINESS',
+        name: name.trim()
+      });
       onSuccess();
       onClose();
       setName('');

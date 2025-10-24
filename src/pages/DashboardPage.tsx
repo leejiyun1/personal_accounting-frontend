@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
+import { ChartDataItem, PieChartDataItem } from '../api/types/statistics';
 import { useStatistics } from '../hooks/useStatistics';
 import { useBookStore } from '../store/bookStore';
 
@@ -47,7 +48,7 @@ function DashboardPage() {
   // ========== 데이터 계산 ==========
 
   // 차트용 데이터 변환
-  const chartData = useMemo(() => {
+  const chartData: ChartDataItem[] = useMemo(() => {
     return filteredMonthlySummary.map(item => ({
       month: item.yearMonth,
       monthName: `${item.yearMonth.split('-')[1]}월`,
@@ -57,10 +58,10 @@ function DashboardPage() {
   }, [filteredMonthlySummary]);
 
   // 도넛 차트용 데이터 변환
-  const pieChartData = useMemo(() => {
+  const pieChartData: PieChartDataItem[] = useMemo(() => {
     if (!categoryData?.categories) return [];
 
-    return categoryData.categories.map((cat: any) => ({
+    return categoryData.categories.map((cat : any) => ({
       name: cat.categoryName,
       value: cat.amount,
       percent: cat.percentage / 100,
@@ -210,7 +211,7 @@ function DashboardPage() {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={pieChartData}
+                    data={pieChartData as any}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
@@ -225,7 +226,7 @@ function DashboardPage() {
                     animationDuration={500}
                     animationEasing="ease-out"
                   >
-                    {pieChartData.map((entry, index) => (
+                    {pieChartData.map((entry: PieChartDataItem, index: number) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}

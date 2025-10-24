@@ -41,3 +41,19 @@ export interface AccountBalanceParams {
 }
 
 export type AccountBalanceResponse = AccountBalance;
+
+/**
+ * 차트 데이터 타입
+ */
+export interface ChartDataItem {
+  month: string;
+  monthName: string;
+  income: number;
+  expense: number;
+}
+
+export interface PieChartDataItem {
+  name: string;
+  value: number;
+  percent: number;
+}

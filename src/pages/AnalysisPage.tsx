@@ -147,20 +147,20 @@ function AnalysisPage() {
                 AI 종합 분석
               </h2>
               <p className="text-xl text-gray-700 dark:text-gray-300">
-                {analysis.aiAnalysis.overview}
+                {analysis.aiComment.overview}
               </p>
             </div>
           </div>
         </div>
 
         {/* 카테고리별 지출 */}
-        {analysis.categoryExpenses.length > 0 && (
+        {analysis.topExpenses.length > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               💰 카테고리별 지출 TOP 5
             </h2>
             <div className="space-y-3">
-              {analysis.categoryExpenses.map((category, index) => (
+              {analysis.topExpenses.map((category, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex justify-between mb-1">
@@ -186,7 +186,7 @@ function AnalysisPage() {
         )}
 
         {/* 잘한 점 */}
-        {analysis.aiAnalysis.strengths.length > 0 && (
+        {analysis.aiComment.strengths.length > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="flex items-start gap-3 mb-4">
               <span className="text-2xl">✅</span>
@@ -195,7 +195,7 @@ function AnalysisPage() {
               </h2>
             </div>
             <ul className="space-y-2">
-              {analysis.aiAnalysis.strengths.map((strength, index) => (
+              {analysis.aiComment.strengths.map((strength, index) => (
                 <li key={index} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
                   <span>•</span>
                   <span>{strength}</span>
@@ -206,7 +206,7 @@ function AnalysisPage() {
         )}
 
         {/* 경고 사항 */}
-        {analysis.aiAnalysis.warnings.length > 0 && (
+        {analysis.aiComment.warnings.length > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="flex items-start gap-3 mb-4">
               <span className="text-2xl">⚠️</span>
@@ -215,7 +215,7 @@ function AnalysisPage() {
               </h2>
             </div>
             <ul className="space-y-2">
-              {analysis.aiAnalysis.warnings.map((warning, index) => (
+              {analysis.aiComment.warnings.map((warning, index) => (
                 <li key={index} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
                   <span>•</span>
                   <span>{warning}</span>
@@ -226,7 +226,7 @@ function AnalysisPage() {
         )}
 
         {/* 개선 제안 */}
-        {analysis.aiAnalysis.suggestions.length > 0 && (
+        {analysis.aiComment.suggestions.length > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="flex items-start gap-3 mb-4">
               <span className="text-2xl">💡</span>
@@ -235,7 +235,7 @@ function AnalysisPage() {
               </h2>
             </div>
             <ul className="space-y-2">
-              {analysis.aiAnalysis.suggestions.map((suggestion, index) => (
+              {analysis.aiComment.suggestions.map((suggestion, index) => (
                 <li key={index} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
                   <span>•</span>
                   <span>{suggestion}</span>

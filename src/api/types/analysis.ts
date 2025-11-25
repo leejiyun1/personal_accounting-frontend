@@ -1,7 +1,7 @@
 export interface AnalysisResponse {
   summary: AnalysisSummary;
-  aiAnalysis: AiAnalysisComment;
-  categoryExpenses: CategoryExpense[];
+  aiComment: AiAnalysisComment;
+  topExpenses: CategoryExpense[];
 }
 
 export interface AnalysisSummary {
@@ -9,8 +9,10 @@ export interface AnalysisSummary {
   totalExpense: number;
   netProfit: number;
   profitRate: number;
+  totalAssets: number;
+  totalLiabilities: number;
+  totalEquity: number;
 }
-
 export interface AiAnalysisComment {
   overview: string;
   strengths: string[];

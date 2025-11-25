@@ -12,9 +12,22 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import { ChartDataItem, PieChartDataItem } from '../api/types/statistics';
+import { useAiChat } from '../hooks/useAiChat';
 import { useStatistics } from '../hooks/useStatistics';
 import { useBookStore } from '../store/bookStore';
+
+interface ChartDataItem {
+  month: string;
+  monthName: string;
+  income: number;
+  expense: number;
+}
+
+interface PieChartDataItem {
+  name: string;
+  value: number;
+  percent: number;
+}
 
 function DashboardPage() {
   const { selectedBookId } = useBookStore();
@@ -23,18 +36,16 @@ function DashboardPage() {
   const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
   const [selectedType, setSelectedType] = useState<'INCOME' | 'EXPENSE'>('EXPENSE');
 
-  // 훅 사용
+  // 통계 훅 사용
   const {
     monthlySummary,
     categoryData,
     fetchCategoryStatistics,
   } = useStatistics({ bookId: selectedBookId, yearMonth: selectedMonth });
 
-  // 채팅 상태
+  // AI 채팅 훅 사용
+  const { messages, isLoading: aiLoading, sendMessage } = useAiChat(selectedBookId);
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([
-    { role: 'ai', content: '안녕하세요! AI 시드입니다.' }
-  ]);
 
   // 최근 12개월 데이터만 필터링
   const filteredMonthlySummary = useMemo(() => {
@@ -45,23 +56,21 @@ function DashboardPage() {
     return monthlySummary.filter(item => item.yearMonth >= startYearMonth);
   }, [monthlySummary]);
 
-  // ========== 데이터 계산 ==========
-
   // 차트용 데이터 변환
   const chartData: ChartDataItem[] = useMemo(() => {
-    return filteredMonthlySummary.map(item => ({
+  return filteredMonthlySummary.map(item => ({
       month: item.yearMonth,
       monthName: `${item.yearMonth.split('-')[1]}월`,
-      income: item.totalIncome,
-      expense: item.totalExpense,
+      income: item.income,
+      expense: item.expense,
     }));
   }, [filteredMonthlySummary]);
 
   // 도넛 차트용 데이터 변환
   const pieChartData: PieChartDataItem[] = useMemo(() => {
-    if (!categoryData?.categories) return [];
+    if (!categoryData || !Array.isArray(categoryData)) return [];
 
-    return categoryData.categories.map((cat : any) => ({
+    return categoryData.map((cat: any) => ({
       name: cat.categoryName,
       value: cat.amount,
       percent: cat.percentage / 100,
@@ -71,21 +80,12 @@ function DashboardPage() {
   // 도넛 차트 색상
   const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#f97316'];
 
-  // ========== 이벤트 핸들러 ==========
-
   // 채팅 전송
   const handleSend = () => {
-    if (!message.trim()) return;
+    if (!message.trim() || aiLoading) return;
 
-    setMessages([...messages, { role: 'user', content: message }]);
+    sendMessage(message);
     setMessage('');
-
-    setTimeout(() => {
-      setMessages(prev => [
-        ...prev,
-        { role: 'ai', content: '네, 알겠습니다. 거래를 기록했습니다!' }
-      ]);
-    }, 1000);
   };
 
   // 막대 차트 클릭
@@ -97,7 +97,6 @@ function DashboardPage() {
     }
   };
 
-  // ========== 렌더링 ==========
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
@@ -135,13 +134,15 @@ function DashboardPage() {
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="메시지를 입력하세요..."
+              disabled={aiLoading}
               className="flex-1 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
             <button
               onClick={handleSend}
-              className="px-6 py-2.5 text-white bg-primary-600 hover:bg-primary-700 rounded-lg font-medium"
+              disabled={aiLoading}
+              className="px-6 py-2.5 text-white bg-primary-600 hover:bg-primary-700 rounded-lg font-medium disabled:opacity-50"
             >
-              전송
+              {aiLoading ? '전송 중...' : '전송'}
             </button>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { transactionsApi } from '../api';
 
 interface UseTransactionsParams {
   bookId: number;
-  accountId: number;
+  accountId?: number;
   enabled: boolean; // 모달 열림 여부
 }
 
@@ -15,15 +15,15 @@ export const useTransactions = ({ bookId, accountId, enabled }: UseTransactionsP
 
   // 거래 내역 조회
   const fetchTransactions = async () => {
-    if (!bookId || !accountId) return;
+    if (!bookId) return;
 
     setIsLoading(true);
     try {
       const response = await transactionsApi.getTransactions({
         bookId,
-        accountId,
-        });
-        setTransactions(response.data.data.content || []);
+        ...(accountId && { accountId }), // accountId가 있을 때만 포함
+      });
+      setTransactions(response.data.data || []); // content가 아니라 직접 배열
     } catch (error) {
       console.error('거래 내역 조회 실패:', error);
     } finally {

@@ -1,4 +1,4 @@
-export interface LedgerSummaryResponse {
+export interface FinancialStatementResponse {
   incomeStatement: IncomeStatement;
   balanceSheet: BalanceSheet;
 }

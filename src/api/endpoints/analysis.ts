@@ -4,7 +4,7 @@ import { ApiResponse } from '../types/common';
 
 export const analysisApi = {
   getAnalysis: (bookId: number, yearMonth: string) =>
-    apiClient.get<ApiResponse<AnalysisResponse>>('/analysis', {
-      params: { bookId, yearMonth }
+    apiClient.get<ApiResponse<AnalysisResponse>>(`/analysis/${bookId}`, {
+      params: { yearMonth }
     }),
 };

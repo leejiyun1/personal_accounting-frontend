@@ -1,27 +1,24 @@
 import { apiClient } from '../client';
 import { ApiResponse } from '../types/common';
 import {
-  AccountBalanceParams,
   AccountBalanceResponse,
   CategoryStatisticsParams,
   CategoryStatisticsResponse,
-  SummaryParams,
-  SummaryResponse,
+  MonthlySummaryResponse,
 } from '../types/statistics';
 
 export const statisticsApi = {
-  getSummary: (params: SummaryParams) =>
-  apiClient.get<ApiResponse<SummaryResponse[]>>('/statistics/summary', {
-    params,
-  }),
+  // 월별 요약 통계 (최근 6개월)
+  getMonthlySummary: (bookId: number) =>
+    apiClient.get<ApiResponse<MonthlySummaryResponse[]>>(`/statistics/monthly/${bookId}`),
 
-  getCategoryStatistics: (params: CategoryStatisticsParams) =>
-    apiClient.get<ApiResponse<CategoryStatisticsResponse>>('/statistics/category', {
+  // 카테고리별 통계
+  getCategoryStatistics: (bookId: number, params: CategoryStatisticsParams) =>
+    apiClient.get<ApiResponse<CategoryStatisticsResponse[]>>(`/statistics/category/${bookId}`, {
       params,
     }),
 
-  getAccountBalances: (params: AccountBalanceParams) =>
-    apiClient.get<ApiResponse<AccountBalanceResponse[]>>('/statistics/accounts', {
-      params,
-    }),
+  // 계정별 잔액 조회
+  getAccountBalances: (bookId: number) =>
+    apiClient.get<ApiResponse<AccountBalanceResponse[]>>(`/statistics/balances/${bookId}`),
 };

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ledgerApi, LedgerSummaryResponse } from '../api';
+import { ledgerApi } from '../api';
+import { FinancialStatementResponse } from '../api/types/ledger';
 import { useBookStore } from '../store/bookStore';
 
 interface AccountData {
@@ -23,7 +24,7 @@ function LedgerPage() {
   const [activeTab, setActiveTab] = useState<'summary' | number>('summary');
   const [selectedMonth, setSelectedMonth] = useState('2025-10');
   const [accounts, setAccounts] = useState<AccountData[]>([]);
-  const [summary, setSummary] = useState<LedgerSummaryResponse | null>(null);
+  const [summary, setSummary] = useState<FinancialStatementResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -36,12 +37,11 @@ function LedgerPage() {
 
     setLoading(true);
     try {
-      // 1. 재무 요약 조회
-      const summaryResponse = await ledgerApi.getLedgerSummary(selectedBookId, selectedMonth);
+      // 재무제표 조회
+      const summaryResponse = await ledgerApi.getFinancialStatement(selectedBookId, selectedMonth);
       setSummary(summaryResponse.data.data);
 
-      // 2. 계정 목록은 별도 API 필요 (TODO: 계정 목록 API 추가)
-      // 임시로 빈 배열
+      // 계정 목록은 별도 API 필요 (TODO: 계정 목록 API 추가)
       setAccounts([]);
 
     } catch (error) {
@@ -58,7 +58,6 @@ function LedgerPage() {
       const response = await ledgerApi.getAccountLedger(selectedBookId, accountId, selectedMonth);
       const data = response.data.data;
 
-      // AccountLedgerResponse를 AccountData로 변환
       const accountData: AccountData = {
         accountId,
         accountName: data.accountName,
@@ -72,7 +71,6 @@ function LedgerPage() {
         })),
       };
 
-      // 기존 accounts에 추가/업데이트
       setAccounts(prev => {
         const exists = prev.find(a => a.accountId === accountId);
         if (exists) {

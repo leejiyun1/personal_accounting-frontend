@@ -12,6 +12,34 @@ export interface Transaction {
   createdAt: string;
 }
 
+export interface TransactionDetailResponse {
+  id: number;
+  bookId: number;
+  date: string;
+  type: 'INCOME' | 'EXPENSE';
+  amount: number;
+  categoryId: number;
+  categoryName: string;
+  paymentMethodId: number;
+  paymentMethodName: string;
+  memo?: string;
+  createdAt: string;
+  journalEntries: JournalEntry[];
+}
+
+export interface JournalEntry {
+  id: number;
+  debit: number;
+  credit: number;
+  details: TransactionDetail[];
+}
+
+export interface TransactionDetail {
+  accountId: number;
+  accountName: string;
+  amount: number;
+}
+
 export interface CreateTransactionRequest {
   bookId: number;
   date: string;
@@ -32,11 +60,7 @@ export interface UpdateTransactionRequest {
 
 export interface TransactionListParams {
   bookId: number;
-  accountId?: number;
   type?: 'INCOME' | 'EXPENSE';
   startDate?: string;
   endDate?: string;
-  categoryId?: number;
-  page?: number;
-  size?: number;
 }

@@ -1,14 +1,16 @@
-export interface Category {
+export interface CategoryResponse {
   id: number;
   code: string;
   name: string;
-  type: 'INCOME' | 'EXPENSE' | 'ASSET' | 'LIABILITY' | 'EQUITY';
+  accountType: 'PAYMENT_METHOD' | 'REVENUE' | 'EXPENSE';
 }
 
-export interface PaymentMethod {
+export interface AccountResponse {
   id: number;
   code: string;
   name: string;
+  accountType: 'PAYMENT_METHOD' | 'REVENUE' | 'EXPENSE';
+  bookType: 'PERSONAL' | 'BUSINESS';
 }
 
 export type BookType = 'PERSONAL' | 'BUSINESS';

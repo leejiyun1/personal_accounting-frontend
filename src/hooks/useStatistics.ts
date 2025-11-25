@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { statisticsApi } from '../api';
+import { CategoryStatisticsResponse, MonthlySummary } from '../api/types/statistics';
 
 interface UseStatisticsParams {
   bookId: number | null;
@@ -7,8 +8,8 @@ interface UseStatisticsParams {
 }
 
 export const useStatistics = ({ bookId, yearMonth }: UseStatisticsParams) => {
-  const [monthlySummary, setMonthlySummary] = useState<any[]>([]);
-  const [categoryData, setCategoryData] = useState<any>(null);
+  const [monthlySummary, setMonthlySummary] = useState<MonthlySummary[]>([]);
+  const [categoryData, setCategoryData] = useState<CategoryStatisticsResponse[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // 월별 요약 조회
@@ -17,7 +18,7 @@ export const useStatistics = ({ bookId, yearMonth }: UseStatisticsParams) => {
 
     setIsLoading(true);
     try {
-      const response = await statisticsApi.getSummary({ bookId });
+      const response = await statisticsApi.getMonthlySummary(bookId);
       setMonthlySummary(response.data.data || []);
     } catch (error) {
       console.error('월별 요약 조회 실패:', error);
@@ -31,8 +32,7 @@ export const useStatistics = ({ bookId, yearMonth }: UseStatisticsParams) => {
     if (!bookId || !yearMonth) return;
 
     try {
-      const response = await statisticsApi.getCategoryStatistics({
-        bookId,
+      const response = await statisticsApi.getCategoryStatistics(bookId, {
         yearMonth,
         type,
       });

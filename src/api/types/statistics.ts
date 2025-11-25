@@ -1,11 +1,12 @@
 export interface MonthlySummary {
   yearMonth: string;
-  totalIncome: number;
-  totalExpense: number;
+  income: number;
+  expense: number;
   balance: number;
 }
 
-export type SummaryResponse = MonthlySummary[];
+export type MonthlySummaryResponse = MonthlySummary;
+
 export interface CategoryStatistic {
   categoryId: number;
   categoryName: string;
@@ -20,12 +21,7 @@ export interface CategoryStatisticsResponse {
   categories: CategoryStatistic[];
 }
 
-export interface SummaryParams {
-  bookId: number;
-}
-
 export interface CategoryStatisticsParams {
-  bookId: number;
   yearMonth: string;
   type: 'INCOME' | 'EXPENSE';
 }
@@ -36,24 +32,4 @@ export interface AccountBalance {
   balance: number;
 }
 
-export interface AccountBalanceParams {
-  bookId: number;
-}
-
 export type AccountBalanceResponse = AccountBalance;
-
-/**
- * 차트 데이터 타입
- */
-export interface ChartDataItem {
-  month: string;
-  monthName: string;
-  income: number;
-  expense: number;
-}
-
-export interface PieChartDataItem {
-  name: string;
-  value: number;
-  percent: number;
-}

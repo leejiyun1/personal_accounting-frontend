@@ -29,7 +29,7 @@ export const useBooks = () => {
   // 계정 잔액 조회
   const fetchAccountBalances = async (bookId: number) => {
     try {
-      const response = await statisticsApi.getAccountBalances({ bookId });
+      const response = await statisticsApi.getAccountBalances(bookId);
       setAccountBalances(response.data.data || []);
     } catch (error) {
       console.error('계정 잔액 조회 실패:', error);

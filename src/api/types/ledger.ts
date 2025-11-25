@@ -1,4 +1,4 @@
-export interface FinancialStatementResponse {
+export interface FinancialStatement {
   incomeStatement: IncomeStatement;
   balanceSheet: BalanceSheet;
 }
@@ -6,7 +6,8 @@ export interface FinancialStatementResponse {
 export interface IncomeStatement {
   totalIncome: number;
   totalExpense: number;
-  netIncome: number;
+  netProfit: number;
+  profitRate: number;
 }
 
 export interface BalanceSheet {

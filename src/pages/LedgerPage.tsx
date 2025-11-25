@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ledgerApi } from '../api';
-import { FinancialStatementResponse } from '../api/types/ledger';
+import { FinancialStatement } from '../api/types/ledger';
 import { useBookStore } from '../store/bookStore';
 
 interface AccountData {
@@ -24,7 +24,7 @@ function LedgerPage() {
   const [activeTab, setActiveTab] = useState<'summary' | number>('summary');
   const [selectedMonth, setSelectedMonth] = useState('2025-10');
   const [accounts, setAccounts] = useState<AccountData[]>([]);
-  const [summary, setSummary] = useState<FinancialStatementResponse | null>(null);
+  const [summary, setSummary] = useState<FinancialStatement | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -179,7 +179,7 @@ function LedgerPage() {
                 <div className="flex justify-between font-bold text-green-600 dark:text-green-400 pt-2 border-t">
                   <span>순이익</span>
                   <span className="font-mono">
-                    {summary.incomeStatement.netIncome.toLocaleString()}원
+                    {summary.incomeStatement.netProfit.toLocaleString()}원
                   </span>
                 </div>
               </div>

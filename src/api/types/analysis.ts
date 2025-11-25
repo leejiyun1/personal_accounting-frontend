@@ -1,18 +1,11 @@
+import { FinancialStatement } from './ledger';
+
 export interface AnalysisResponse {
-  summary: AnalysisSummary;
+  summary: FinancialStatement;
   aiComment: AiAnalysisComment;
   topExpenses: CategoryExpense[];
 }
 
-export interface AnalysisSummary {
-  totalIncome: number;
-  totalExpense: number;
-  netProfit: number;
-  profitRate: number;
-  totalAssets: number;
-  totalLiabilities: number;
-  totalEquity: number;
-}
 export interface AiAnalysisComment {
   overview: string;
   strengths: string[];

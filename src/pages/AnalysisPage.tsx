@@ -117,22 +117,22 @@ function AnalysisPage() {
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">총 수입</p>
               <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {analysis.summary.totalIncome.toLocaleString()}원
+                {analysis.summary.incomeStatement.totalIncome.toLocaleString()}원
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">총 지출</p>
               <p className="text-2xl font-bold text-red-600 dark:text-red-400">
-                {analysis.summary.totalExpense.toLocaleString()}원
+                {analysis.summary.incomeStatement.totalExpense.toLocaleString()}원
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">순이익</p>
               <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                {analysis.summary.netProfit.toLocaleString()}원
+                {analysis.summary.incomeStatement.netProfit.toLocaleString()}원
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                수익률: {analysis.summary.profitRate.toFixed(1)}%
+                수익률: {analysis.summary.incomeStatement.profitRate.toFixed(1)}%
               </p>
             </div>
           </div>

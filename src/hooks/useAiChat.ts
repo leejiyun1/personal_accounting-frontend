@@ -11,6 +11,7 @@ export const useAiChat = (bookId: number | null) => {
     { role: 'ai', content: '안녕하세요! AI 시드입니다. 무엇을 도와드릴까요?' }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
 
   const sendMessage = async (message: string) => {
     if (!bookId || !message.trim()) return;
@@ -24,12 +25,23 @@ export const useAiChat = (bookId: number | null) => {
       const response = await aiApi.chat({
         bookId,
         message: message,
+        conversationId: conversationId || undefined,
       });
+
+      const data = response.data.data;
+
+      // conversationId 저장
+      if (data.conversationId) {
+        setConversationId(data.conversationId);
+      } else {
+        // 거래 완료 시 초기화
+        setConversationId(null);
+      }
 
       // AI 응답 추가
       const aiMessage: Message = {
         role: 'ai',
-        content: response.data.data.message
+        content: data.message
       };
       setMessages(prev => [...prev, aiMessage]);
 

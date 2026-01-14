@@ -10,6 +10,7 @@ interface TransactionModalProps {
 function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionModalProps) {
   const {
     transactions,
+    accountName,
     isLoading,
     filterType,
     setFilterType,
@@ -34,10 +35,10 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              거래 내역
+              {accountName || '거래 내역'}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              계정 ID: {accountId}
+              계정별 원장 조회
             </p>
           </div>
           <button
@@ -62,13 +63,13 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
               {/* 통계 카드 */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">총 수입</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">총 입금</p>
                   <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
                     {stats.totalIncome.toLocaleString()}원
                   </p>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">총 지출</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">총 출금</p>
                   <p className="text-xl font-bold text-red-600 dark:text-red-400">
                     {stats.totalExpense.toLocaleString()}원
                   </p>
@@ -109,7 +110,7 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
                           : 'bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-300'
                       }`}
                     >
-                      수입
+                      입금
                     </button>
                     <button
                       onClick={() => setFilterType('EXPENSE')}
@@ -119,7 +120,7 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
                           : 'bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-300'
                       }`}
                     >
-                      지출
+                      출금
                     </button>
                   </div>
 
@@ -155,7 +156,7 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
                           구분
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-                          메모
+                          적요
                         </th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                           금액
@@ -179,7 +180,7 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
                                   : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                               }`}
                             >
-                              {transaction.type === 'INCOME' ? '수입' : '지출'}
+                              {transaction.type === 'INCOME' ? '입금' : '출금'}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
@@ -194,7 +195,7 @@ function TransactionModal({ isOpen, onClose, bookId, accountId }: TransactionMod
                               }
                             >
                               {transaction.type === 'INCOME' ? '+' : '-'}
-                              {parseFloat(transaction.amount || 0).toLocaleString()}원
+                              {Number(transaction.amount).toLocaleString()}원
                             </span>
                           </td>
                         </tr>

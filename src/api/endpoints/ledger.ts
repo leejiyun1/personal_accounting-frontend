@@ -1,11 +1,11 @@
 import { apiClient } from '../client';
 import { ApiResponse } from '../types/common';
-import { AccountLedgerResponse, FinancialStatementResponse } from '../types/ledger';
+import { AccountLedgerResponse, FinancialStatement } from '../types/ledger';
 
 export const ledgerApi = {
   // 재무제표 조회 (손익계산서 + 재무상태표)
   getFinancialStatement: (bookId: number, yearMonth: string) =>
-    apiClient.get<ApiResponse<FinancialStatementResponse>>(`/ledger/statement/${bookId}`, {
+    apiClient.get<ApiResponse<FinancialStatement>>(`/ledger/statement/${bookId}`, {
       params: { yearMonth }
     }),
 

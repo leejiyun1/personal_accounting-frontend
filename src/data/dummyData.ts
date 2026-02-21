@@ -7,11 +7,6 @@ interface MonthlyData {
   expense: number;
 }
 
-interface CategoryItem {
-  name: string;
-  value: number;
-}
-
 export interface CategoryData {
   income: Array<{ name: string; value: number }>;
   expense: Array<{ name: string; value: number }>;

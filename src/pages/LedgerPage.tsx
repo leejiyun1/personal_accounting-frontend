@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ledgerApi, statisticsApi } from '../api';
 import { FinancialStatement } from '../api/types/ledger';
 import { AccountBalanceResponse } from '../api/types/statistics';
@@ -35,19 +35,7 @@ function LedgerPage() {
     return { value: `2025-${month}`, label: `2025년 ${i + 1}월` };
   });
 
-  useEffect(() => {
-    if (!selectedBookId) return;
-    fetchInitialData();
-  }, [selectedBookId]);
-
-  useEffect(() => {
-    if (!selectedBookId) return;
-    fetchSummary();
-    // 월 변경 시 원장 데이터 초기화
-    setAccountLedgers([]);
-  }, [selectedBookId, selectedMonth]);
-
-  const fetchInitialData = async () => {
+  const fetchInitialData = useCallback(async () => {
     if (!selectedBookId) return;
 
     setLoading(true);
@@ -65,9 +53,9 @@ function LedgerPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedBookId, selectedMonth]);
 
-  const fetchSummary = async () => {
+  const fetchSummary = useCallback(async () => {
     if (!selectedBookId) return;
 
     try {
@@ -76,9 +64,9 @@ function LedgerPage() {
     } catch (error) {
       console.error('재무제표 조회 실패:', error);
     }
-  };
+  }, [selectedBookId, selectedMonth]);
 
-  const fetchAccountLedger = async (accountId: number, accountName: string) => {
+  const fetchAccountLedger = useCallback(async (accountId: number, accountName: string) => {
     if (!selectedBookId) return;
 
     try {
@@ -109,7 +97,7 @@ function LedgerPage() {
     } catch (error) {
       console.error('계정 원장 조회 실패:', error);
     }
-  };
+  }, [selectedBookId, selectedMonth]);
 
   const handleAccountClick = (accountId: number, accountName: string) => {
     setActiveTab(accountId);
@@ -120,6 +108,18 @@ function LedgerPage() {
       fetchAccountLedger(accountId, accountName);
     }
   };
+
+  useEffect(() => {
+    if (!selectedBookId) return;
+    fetchInitialData();
+  }, [fetchInitialData, selectedBookId]);
+
+  useEffect(() => {
+    if (!selectedBookId) return;
+    fetchSummary();
+    // 월 변경 시 원장 데이터 초기화
+    setAccountLedgers([]);
+  }, [fetchSummary, selectedBookId, selectedMonth]);
 
   if (loading) {
     return (
@@ -247,7 +247,6 @@ function LedgerPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-300 dark:border-gray-700 overflow-hidden">
             {(() => {
               const currentLedger = accountLedgers.find(a => a.accountId === activeTab);
-              const currentAccount = accountList.find(a => a.accountId === activeTab);
 
               if (!currentLedger) {
                 return (

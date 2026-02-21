@@ -1,3 +1,5 @@
+import type { UserInfo } from '../api/types/auth';
+
 const ACCESS_TOKEN_KEY = 'accessToken';
 const REFRESH_TOKEN_KEY = 'refreshToken';
 const USER_KEY = 'user';
@@ -18,12 +20,12 @@ export const setRefreshToken = (token: string): void => {
   localStorage.setItem(REFRESH_TOKEN_KEY, token);
 };
 
-export const getUser = (): any | null => {
+export const getUser = (): UserInfo | null => {
   const user = localStorage.getItem(USER_KEY);
-  return user ? JSON.parse(user) : null;
+  return user ? (JSON.parse(user) as UserInfo) : null;
 };
 
-export const setUser = (user: any): void => {
+export const setUser = (user: UserInfo): void => {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 };
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { statisticsApi } from '../api';
 import { CategoryStatisticsResponse, MonthlySummary } from '../api/types/statistics';
 
@@ -13,7 +13,7 @@ export const useStatistics = ({ bookId, yearMonth }: UseStatisticsParams) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // 월별 요약 조회
-  const fetchMonthlySummary = async () => {
+  const fetchMonthlySummary = useCallback(async () => {
     if (!bookId) return;
 
     setIsLoading(true);
@@ -25,10 +25,10 @@ export const useStatistics = ({ bookId, yearMonth }: UseStatisticsParams) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [bookId]);
 
   // 카테고리별 통계 조회
-  const fetchCategoryStatistics = async (type: 'INCOME' | 'EXPENSE') => {
+  const fetchCategoryStatistics = useCallback(async (type: 'INCOME' | 'EXPENSE') => {
     if (!bookId || !yearMonth) return;
 
     try {
@@ -40,14 +40,14 @@ export const useStatistics = ({ bookId, yearMonth }: UseStatisticsParams) => {
     } catch (error) {
       console.error('카테고리 통계 조회 실패:', error);
     }
-  };
+  }, [bookId, yearMonth]);
 
   // bookId 변경 시 월별 요약 자동 조회
   useEffect(() => {
     if (bookId) {
       fetchMonthlySummary();
     }
-  }, [bookId]);
+  }, [bookId, fetchMonthlySummary]);
 
   return {
     monthlySummary,

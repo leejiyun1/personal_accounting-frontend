@@ -14,12 +14,7 @@ export interface CategoryStatistic {
   percentage: number;
 }
 
-export interface CategoryStatisticsResponse {
-  yearMonth: string;
-  type: 'INCOME' | 'EXPENSE';
-  totalAmount: number;
-  categories: CategoryStatistic[];
-}
+export type CategoryStatisticsResponse = CategoryStatistic;
 
 export interface CategoryStatisticsParams {
   yearMonth: string;

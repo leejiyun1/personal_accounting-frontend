@@ -9,7 +9,7 @@ function Navbar() {
 
   useEffect(() => {
     fetchBooks();
-  }, []);
+  }, [fetchBooks]);
 
   return (
     <header>

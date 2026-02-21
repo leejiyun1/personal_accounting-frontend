@@ -1,5 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { clearTokens, getAccessToken, getRefreshToken, setAccessToken } from '../utils/storage';
+import { clearTokens, getAccessToken, getRefreshToken, setAccessToken, setRefreshToken } from '../utils/storage';
 import { apiClient } from './client';
 
 // 요청 인터셉터
@@ -38,7 +38,9 @@ apiClient.interceptors.response.use(
         });
 
         const newAccessToken = response.data.data.accessToken;
+        const newRefreshToken = response.data.data.refreshToken;
         setAccessToken(newAccessToken);
+        setRefreshToken(newRefreshToken);
 
         // 원래 요청 재시도
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

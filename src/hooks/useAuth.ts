@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import { authApi } from '../api';
 import { clearTokens, setAccessToken, setRefreshToken, setUser } from '../utils/storage';
 
@@ -26,15 +27,21 @@ export const useAuth = () => {
       setUser(user);
 
       navigate('/dashboard');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
       console.error('로그인 실패:', err);
-      setError(err.response?.data?.message || '로그인에 실패했습니다.');
+      setError(axiosError.response?.data?.message || '로그인에 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await authApi.logout();
+    } catch (err) {
+      console.error('로그아웃 API 실패:', err);
+    }
     clearTokens();
     navigate('/');
   };

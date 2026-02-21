@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { analysisApi, AnalysisResponse } from '../api';
 import { useBookStore } from '../store/bookStore';
 
@@ -14,13 +14,7 @@ function AnalysisPage() {
   // 갱신 가능 여부 (1시간)
   const canRefresh = timeUntilRefresh <= 0;
 
-  // 분석 데이터 가져오기
-  useEffect(() => {
-    if (!selectedBookId) return;
-    fetchAnalysis();
-  }, [selectedBookId, selectedMonth]);
-
-  const fetchAnalysis = async () => {
+  const fetchAnalysis = useCallback(async () => {
     if (!selectedBookId) return;
 
     setIsLoading(true);
@@ -33,7 +27,13 @@ function AnalysisPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedBookId, selectedMonth]);
+
+  // 분석 데이터 가져오기
+  useEffect(() => {
+    if (!selectedBookId) return;
+    fetchAnalysis();
+  }, [fetchAnalysis, selectedBookId]);
 
   const handleRefresh = () => {
     if (!canRefresh) return;
